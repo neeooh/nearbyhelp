@@ -1,24 +1,41 @@
-
-
 var map;
 var placesService;
 var infowindow;
 var userLocation;
 var infoWindow;
 
-var placesAllSelected = ['pharmacy', 'police', 'grocery_or_supermarket'];
+var placesAllSelected = ['pharmacy', 'grocery_or_supermarket']; //
 
 
-var placesEssential = ['pharmacy', 'liquor_store', 'atm'];
-var placesSafety = ['police', 'lawyer'];
-var placesMoney = ['accounting', 'lawyer', 'lodging'];
+var placesEssential = ['pharmacy', 'grocery_or_supermarket', 'liquor_store', 'atm'];
+var placesSafety = ['police'];
+var placesMoney = ['lawyer', 'lodging'];
 var placesTravel = ['airport', 'light_rail_station'];
 var placesGov = ['local_government_office'];
 var placesLaundry = ['laundry'];
 
+var placesAllUnSelected = [];
+
+
 // Immediately Invoked Function Expressions
 (function () {
+    placesAllUnSelected = placesAllUnSelected.concat(placesEssential, placesSafety, placesMoney, placesTravel, placesGov, placesLaundry);
+    
+    placesAllSelected.forEach( function(place){
+        
+        var index = placesAllUnSelected.indexOf(place);
+        
+        if(index > -1)
+        {
+            delete placesAllUnSelected[index];
+        }
+        
+    });
+    
+    
+    
   createNavBtns();
+    
 }());
 
 
@@ -28,19 +45,39 @@ function createNavBtns() {
     var filterPanel = document.getElementById('filter-panel');
     
   placesAllSelected.forEach(function(rowData) {
-    var label = document.createElement('label');
+    appendBtnsToParent(filterPanel, rowData, true)
+  });
+    
+      
+    var groupLabel = document.createElement('label');
+    //groupLabel.appendChild(document.createTextNode("Unselected:"));
+      
+    filterPanel.appendChild(groupLabel);
+    
+      placesAllUnSelected.forEach(function(rowData) {
+        appendBtnsToParent(filterPanel, rowData, false)
+      });
+
+//  table.appendChild(tableBody);
+  //document.body.appendChild(table);
+}
+
+function appendBtnsToParent(parentElement, rowData, isActive){
+        var label = document.createElement('label');
       label.classList.add('mr-1');
       label.classList.add('place-type-btn');
       label.classList.add('btn');
       label.classList.add('btn-sm');
       label.classList.add('btn-secondary');
-      label.classList.add('active'); //TODO - only if active
+      if(isActive == true)
+          label.classList.add('active'); //TODO - only if active
       label.setAttribute("aria-labelledby", rowData);
       
     var input = document.createElement('input');
       input.setAttribute("type", "checkbox");
       input.setAttribute("autocomplete", "off");
-      input.setAttribute("checked", true);
+    if(isActive == true)
+        input.setAttribute("checked", true);
       input.setAttribute("value", rowData);
       //input.createTextNode(rowData);
       
@@ -53,11 +90,7 @@ function createNavBtns() {
 //      row.appendChild(cell);
 //    });
 
-    filterPanel.appendChild(label);
-  });
-
-//  table.appendChild(tableBody);
-  //document.body.appendChild(table);
+    parentElement.appendChild(label);    
 }
 
 function initMap() {
@@ -74,25 +107,17 @@ function initMap() {
         }
         else{
             placesAllSelected.push(placeTypeStr);
-            getMultipleDifferentPlaces(map.getCenter());
-            //getPlacesNearby(placeTypeStr, map.getCenter());
-            
-        }
-    
-        
-        
+            // TODO - implement some caching?
+            getMultipleDifferentPlaces(map.getCenter());            
+        }  
     });
-//
-//    getPlacesNearby('grocery_or_supermarket');
-//  getPlacesNearby('pharmacy');
-//    
-    
-    var sydney = new google.maps.LatLng(-33.867, 151.195);
+
+    var causewayCoast = new google.maps.LatLng(55.167355, -6.679138);
 
         infowindow = new google.maps.InfoWindow();
         mapOptions = {
-            center: sydney, 
-            zoom: 14,
+            center: causewayCoast, 
+            zoom: 10,
             styles: mapStyle
         };
 
@@ -100,13 +125,13 @@ function initMap() {
           document.getElementById('map'), mapOptions);
 
 // Drag-End Event
-map.addListener('idle', function() {
-    //get center location of the drag
-    setTimeout(function(){ 
-        getMultipleDifferentPlaces(map.getCenter());
-    }, 3000);
-    
-});
+//map.addListener('idle', function() {
+//    //get center location of the drag
+//    //setTimeout(function(){ 
+//        getMultipleDifferentPlaces(map.getCenter());
+//    //}, 3000);
+//    
+//});
     
     
         // Try HTML5 geolocation.
@@ -118,6 +143,22 @@ map.addListener('idle', function() {
             };
              
             map.setCenter(userLocation);
+            map.zoom = 16;
+            
+              
+            if(map.getBounds() == undefined) {
+                setTimeout(function() {
+                    //var bounds = map.getBounds();
+
+
+                    getMultipleDifferentPlaces();
+
+
+                }, 100); //some error map.getBounds() returns undefined at start so that's why I delay it by 500ms
+            }  
+              
+              
+              
           }, function() {
             handleLocationError(true, infoWindow, map.getCenter());
           });
@@ -129,43 +170,96 @@ map.addListener('idle', function() {
 
     
 
-placesService = new google.maps.places.PlacesService(map);
+    placesService = new google.maps.places.PlacesService(map);
 
 
 
-infoWindow = new google.maps.InfoWindow({});
+    infoWindow = new google.maps.InfoWindow({});
+
+//    google.maps.event.addListener(map, 'bounds_changed', function() {
+//        console.log('bounds_changed');
+//        //getMultipleDifferentPlaces(map.getCenter());
+//    });  
+
+    google.maps.event.addListener(map, 'dragend', function() {
+        if(map.zoom >= 8) //TODO if you want to getting places info when zoomed out
+            getMultipleDifferentPlaces();
+    }); 
+
+    google.maps.event.addListener(map, 'zoom_changed', function() {
+        
+    //    if(map.zoom >= 8) //TODO if you want to getting places info when zoomed out
+    //        getMultipleDifferentPlaces(map.getCenter());
+        
+        rtime = new Date();
+        if (timeout === false) {
+            timeout = true;
+            setTimeout(zoomChangedEnd, delta);
+        }
+    });
+
+
     
-    
-    
-            getMultipleDifferentPlaces(map.getCenter());
 }
 
 
-function getMultipleDifferentPlaces(selectedLocation){
+var rtime;
+var timeout = false;
+var delta = 700;
+function zoomChangedEnd(){
+    if (new Date() - rtime < delta) {
+        setTimeout(zoomChangedEnd, delta);
+    } else {
+        timeout = false;
+        getMultipleDifferentPlaces();
+    }
+}
+
+function getAllSelectedPlaces(){
+    
+}
+
+function getMultipleDifferentPlaces(){
     
     //Build config
-    var config = placesAllSelected; //placesEssential.concat(placesSafety);
-    
-    for(i = 0; i < config.length; i++) {
-        getPlacesNearby(config[i], selectedLocation);
+    //var config = placesAllSelected; //placesEssential.concat(placesSafety);
+    if(map.zoom < 8){
+        console.log("Please zoom-in to see the new pins.");
+        return;
     }
     
-    map.setCenter(selectedLocation);
+    for(i = 0; i < placesAllSelected.length; i++) {
+        getPlacesNearby(placesAllSelected[i]);
+    }
+    
+    //map.setCenter(selectedLocation);
 }
 
 
 
-function getPlacesNearby(selectedType, selectedLocation) {
+function getPlacesNearby(selectedType) {
+//    if(map.getBounds() == undefined) {
+//        var request = {
+//            location: map.getCenter(),
+//            radius: '50000',
+//            type: selectedType
+//        };
+//    }
+//    else {
+//        var request = {
+//            bounds: map.getBounds(),
+//            type: selectedType
+//        };
+//    }
     
-//    var request = {
-//        location: selectedLocation,
-//        radius: '5000',
-//        type: selectedType
-//    };
-     var request = {
-        bounds: map.getBounds(),
-        type: selectedType
-    };
+    
+    
+    var request = {
+            bounds: map.getBounds(),
+            type: selectedType
+        };
+    
+    console.log("Getting nearby places center: "+  map.getCenter() +" bounds:" + map.getBounds());
     
     placesService.nearbySearch(request, 
         function(results, status) {
@@ -194,11 +288,11 @@ function getPlacesFromQuery(request) {
 
 // Location Error Handling
 function handleLocationError(browserHasGeolocation, infoWindow, pos) {
-    infoWindow.setPosition(pos);
-    infoWindow.setContent(browserHasGeolocation ?
-                          'Error: The Geolocation service failed.' :
-                          'Error: Your browser doesn\'t support geolocation.');
-    infoWindow.open(map);
+//    infoWindow.setPosition(pos);
+//    infoWindow.setContent(browserHasGeolocation ?
+//                          'Error: The Geolocation service failed.' :
+//                          'Error: Your browser doesn\'t support geolocation.');
+//    infoWindow.open(map);
   }
 
 var markers = [];
@@ -322,125 +416,6 @@ function clearMarkers(placeType) {
     setMapOnAll(null, placeType);
 }
 
-
-
-
-/**
- * Initialize the Google Map.
- */
-function initMap2() {
-  // Create the map.
-  const map = new google.maps.Map(document.getElementById('map'), {
-    zoom: 7,
-    center: {lat: 52.632469, lng: -1.689423},
-    //styles: mapStyle,
-  });
-
-  // Load the stores GeoJSON onto the map.
-  map.data.loadGeoJson('stores.json', {idPropertyName: 'storeid'});
-
-  // Define the custom marker icons, using the store's "category".
-  map.data.setStyle((feature) => {
-    return {
-      icon: {
-        url: `img/icon_${feature.getProperty('category')}.png`,
-        scaledSize: new google.maps.Size(64, 64),
-      },
-    };
-  });
-
-  const apiKey = 'AIzaSyDKLAB-abarMKOVmwh2NYHq5zkXnaMstjI';
-  const infoWindow = new google.maps.InfoWindow();
-
-  // Show the information for a store when its marker is clicked.
-  map.data.addListener('click', (event) => {
-    const category = event.feature.getProperty('category');
-    const name = event.feature.getProperty('name');
-    const description = event.feature.getProperty('description');
-    const hours = event.feature.getProperty('hours');
-    const phone = event.feature.getProperty('phone');
-    const position = event.feature.getGeometry().get();
-    const content = sanitizeHTML`
-      <img style="float:left; width:200px; margin-top:30px" src="img/logo_${category}.png">
-      <div style="margin-left:220px; margin-bottom:20px;">
-        <h2>${name}</h2><p>${description}</p>
-        <p><b>Open:</b> ${hours}<br/><b>Phone:</b> ${phone}</p>
-        <p><img src="https://maps.googleapis.com/maps/api/streetview?size=350x120&location=${position.lat()},${position.lng()}&key=${apiKey}"></p>
-      </div>
-      `;
-
-    infoWindow.setContent(content);
-    infoWindow.setPosition(position);
-    infoWindow.setOptions({pixelOffset: new google.maps.Size(0, -30)});
-    infoWindow.open(map);
-  });
-
-  // Build and add the search bar
-  const card = document.createElement('div');
-  const titleBar = document.createElement('div');
-  const title = document.createElement('div');
-  const container = document.createElement('div');
-  const input = document.createElement('input');
-  const options = {
-    types: ['address'],
-    componentRestrictions: {country: 'gb'},
-  };
-
-  card.setAttribute('id', 'pac-card');
-  title.setAttribute('id', 'title');
-  title.textContent = 'Find the nearest store';
-  titleBar.appendChild(title);
-  container.setAttribute('id', 'pac-container');
-  input.setAttribute('id', 'pac-input');
-  input.setAttribute('type', 'text');
-  input.setAttribute('placeholder', 'Enter an address');
-  container.appendChild(input);
-  card.appendChild(titleBar);
-  card.appendChild(container);
-  map.controls[google.maps.ControlPosition.TOP_RIGHT].push(card);
-
-  // Make the search bar into a Places Autocomplete search bar and select
-  // which detail fields should be returned about the place that
-  // the user selects from the suggestions.
-  const autocomplete = new google.maps.places.Autocomplete(input, options);
-
-  autocomplete.setFields(
-      ['address_components', 'geometry', 'name']);
-
-  // Set the origin point when the user selects an address
-  const originMarker = new google.maps.Marker({map: map});
-  originMarker.setVisible(false);
-  let originLocation = map.getCenter();
-
-  autocomplete.addListener('place_changed', async () => {
-    originMarker.setVisible(false);
-    originLocation = map.getCenter();
-    const place = autocomplete.getPlace();
-
-    if (!place.geometry) {
-      // User entered the name of a Place that was not suggested and
-      // pressed the Enter key, or the Place Details request failed.
-      window.alert('No address available for input: \'' + place.name + '\'');
-      return;
-    }
-
-    // Recenter the map to the selected address
-    originLocation = place.geometry.location;
-    map.setCenter(originLocation);
-    map.setZoom(9);
-    console.log(place);
-
-    originMarker.setPosition(originLocation);
-    originMarker.setVisible(true);
-
-    // Use the selected address as the origin to calculate distances
-    // to each of the store locations
-    const rankedStores = await calculateDistances(map.data, originLocation);
-    showStoresList(map.data, rankedStores);
-
-    return;
-  });
-}
 
 
 
