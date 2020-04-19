@@ -65,6 +65,7 @@ function createNavBtns() {
 function appendBtnsToParent(parentElement, rowData, isActive){
         var label = document.createElement('label');
       label.classList.add('mr-1');
+      label.classList.add('mt-1');
       label.classList.add('place-type-btn');
       label.classList.add('btn');
       label.classList.add('btn-sm');
@@ -118,7 +119,14 @@ function initMap() {
         mapOptions = {
             center: causewayCoast, 
             zoom: 10,
-            styles: mapStyle
+            styles: mapStyle,
+            disableDefaultUI: true,
+            zoomControl: true,
+//            mapTypeControl: true,
+            scaleControl: true,
+            streetViewControl: true,
+            rotateControl: true,
+            fullscreenControl: true
         };
 
         map = new google.maps.Map(
