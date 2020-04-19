@@ -30,6 +30,7 @@
 		.overflow-hidden {
 			overflow: hidden;
 		}
+
 	</style>
 
 	<!-- Global site tag (gtag.js) - Google Analytics -->
@@ -43,6 +44,7 @@
 		gtag('js', new Date());
 
 		gtag('config', 'G-SK42ZT70EP');
+
 	</script>
 
 	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
@@ -53,7 +55,7 @@
 <body>
 	<div class="container-fluid h-100 d-flex overflow-hidden" style="flex-flow: column;">
 		<!--      Site Top NavBar-->
-		<div id="site-nav-bar" class="row">
+		<div id="site-nav-bar" class="row" >
 			<div class="col p-0">
 				<nav class="navbar navbar-expand-lg navbar-dark bg-primary">
 					<a class="navbar-brand" href="#">Nearby Help</a>
@@ -100,13 +102,13 @@
 		</div>
 
 
-		<div class="row">
-			<div class="col px-1 pt-0 pb-1">
+<div class="row">
+	<div class="col px-1 pt-0 pb-1">
 
 
-				<div id="filter-panel" class="btn-group-toggle" data-toggle="buttons">
-					<!--                 <label>Selected:</label>-->
-					<!--
+		<div id="filter-panel" class="btn-group-toggle" data-toggle="buttons">
+			<!--                 <label>Selected:</label>-->
+			<!--
 		  <label aria-labelledby="pharmacy" class="place-type-btn btn btn-secondary btn-sm active">
 			<input type="checkbox" checked autocomplete="off"> Pharmacy
 		  </label>
@@ -115,18 +117,19 @@
 		  </label>
 -->
 
-				</div>
-			</div>
 		</div>
+	</div>
+</div>
 
 
-		<!--       Map-->
-		<div class="row h-100">
-			<div class="col p-0">
-				<div id="map"></div>
-			</div>
-		</div>
+<!--       Map-->
+<div class="row h-100">
+	<div class="col p-0">
+		<div id="map"></div>
+	</div>
+</div>
 
+<!--<iframe src="/map.html" frameborder="0"></iframe>-->
 
 	</div>
 
@@ -145,4 +148,6 @@
 	<script src="app.js"></script>
 
 
-</body></html>
+</body>
+
+</html>

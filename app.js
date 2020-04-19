@@ -161,7 +161,7 @@ function initMap() {
 	// EVENTS
 
 	// Panning/Dragging End
-	google.maps.event.addListener(map, 'dragend', function () {
+	google.maps.event.addListener(map, 'idle', function () {
 		if (map.zoom >= 8) //TODO if you want to getting places info when zoomed out
 			getMultipleDifferentPlaces();
 	});
