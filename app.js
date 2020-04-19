@@ -7,12 +7,12 @@ var infoWindow;
 var placesAllSelected = ['pharmacy', 'grocery_or_supermarket']; //
 
 
-var placesEssential = ['pharmacy', 'grocery_or_supermarket', 'liquor_store', 'atm'];
+var placesEssential = ['pharmacy', 'grocery_or_supermarket', 'convenience_store', 'liquor_store', 'post_office', 'atm'];
 var placesSafety = ['police'];
-var placesMoney = ['lawyer', 'lodging'];
-var placesTravel = ['airport', 'light_rail_station'];
-var placesGov = ['local_government_office'];
-var placesLaundry = ['laundry'];
+var placesMoney = ['lodging']; //'lawyer'
+var placesTravel = ['train_station', 'bus_station']; //'airport', 'light_rail_station'
+var placesGov = []; //'local_government_office'
+var placesLaundry = ['laundry', 'funeral_home'];
 
 var placesAllUnSelected = [];
 
@@ -95,6 +95,9 @@ function appendBtnsToParent(parentElement, rowData, isActive){
 }
 
 function initMap() {
+    var london = new google.maps.LatLng(51.512886, -0.102280);
+    var causewayCoast = new google.maps.LatLng(55.167355, -6.679138);
+    infoWindow = new google.maps.InfoWindow({});
     
     //JQUERY for Button Toggle selection of places
     $(".place-type-btn").click(function(event){
@@ -113,12 +116,9 @@ function initMap() {
         }  
     });
 
-    var causewayCoast = new google.maps.LatLng(55.167355, -6.679138);
-
-        infowindow = new google.maps.InfoWindow();
         mapOptions = {
-            center: causewayCoast, 
-            zoom: 10,
+            center: london, 
+            zoom: 14,
             styles: mapStyle,
             disableDefaultUI: true,
             zoomControl: true,
@@ -129,8 +129,8 @@ function initMap() {
             fullscreenControl: true
         };
 
-        map = new google.maps.Map(
-          document.getElementById('map'), mapOptions);
+    map = new google.maps.Map(document.getElementById('map'), mapOptions);
+    placesService = new google.maps.places.PlacesService(map);
 
 // Drag-End Event
 //map.addListener('idle', function() {
@@ -145,27 +145,15 @@ function initMap() {
         // Try HTML5 geolocation.
         if (navigator.geolocation) {
           navigator.geolocation.getCurrentPosition(function(position) {
-            userLocation = {
-              lat: position.coords.latitude,
-              lng: position.coords.longitude
-            };
-             
-            map.setCenter(userLocation);
-            map.zoom = 16;
-            
-              
-            if(map.getBounds() == undefined) {
-                setTimeout(function() {
-                    //var bounds = map.getBounds();
+                userLocation = {
+                  lat: position.coords.latitude,
+                  lng: position.coords.longitude
+                };
 
 
-                    getMultipleDifferentPlaces();
 
-
-                }, 100); //some error map.getBounds() returns undefined at start so that's why I delay it by 500ms
-            }  
-              
-              
+                map.setCenter(userLocation);
+                map.zoom = 16;
               
           }, function() {
             handleLocationError(true, infoWindow, map.getCenter());
@@ -175,14 +163,15 @@ function initMap() {
           handleLocationError(false, infoWindow, map.getCenter());
         }
     
+if(map.getBounds() == undefined) {
+        setTimeout(function() {
+            getMultipleDifferentPlaces();
+        }, 500); //some error map.getBounds() returns undefined at start so that's why I delay it by 500ms
+    } 
 
-    
-
-    placesService = new google.maps.places.PlacesService(map);
 
 
 
-    infoWindow = new google.maps.InfoWindow({});
 
 //    google.maps.event.addListener(map, 'bounds_changed', function() {
 //        console.log('bounds_changed');
