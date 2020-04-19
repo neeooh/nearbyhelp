@@ -19,333 +19,318 @@ var placesAllUnSelected = [];
 
 // Immediately Invoked Function Expressions
 (function () {
-    placesAllUnSelected = placesAllUnSelected.concat(placesEssential, placesSafety, placesMoney, placesTravel, placesGov, placesLaundry);
-    
-    placesAllSelected.forEach( function(place){
-        
-        var index = placesAllUnSelected.indexOf(place);
-        
-        if(index > -1)
-        {
-            delete placesAllUnSelected[index];
-        }
-        
-    });
-    
-    
-    
-  createNavBtns();
-    
+	placesAllUnSelected = placesAllUnSelected.concat(placesEssential, placesSafety, placesMoney, placesTravel, placesGov, placesLaundry);
+
+	placesAllSelected.forEach(function (place) {
+
+		var index = placesAllUnSelected.indexOf(place);
+
+		if (index > -1) {
+			delete placesAllUnSelected[index];
+		}
+	});
+
+
+	// Create The UI GUI Buttons for Places
+	createNavBtns();
+
 }());
 
 
 function createNavBtns() {
-//  var table = document.createElement('table');
-//  var tableBody = document.createElement('tbody');
-    var filterPanel = document.getElementById('filter-panel');
-    
-  placesAllSelected.forEach(function(rowData) {
-    appendBtnsToParent(filterPanel, rowData, true)
-  });
-    
-      
-    var groupLabel = document.createElement('label');
-    //groupLabel.appendChild(document.createTextNode("Unselected:"));
-      
-    filterPanel.appendChild(groupLabel);
-    
-      placesAllUnSelected.forEach(function(rowData) {
-        appendBtnsToParent(filterPanel, rowData, false)
-      });
+	
+	var filterPanel = document.getElementById('filter-panel');
 
-//  table.appendChild(tableBody);
-  //document.body.appendChild(table);
+	placesAllSelected.forEach(function (rowData) {
+		appendBtnsToParent(filterPanel, rowData, true)
+	});
+
+	var groupLabel = document.createElement('label');
+	//groupLabel.appendChild(document.createTextNode("Unselected:"));
+
+	filterPanel.appendChild(groupLabel);
+
+	placesAllUnSelected.forEach(function (rowData) {
+		appendBtnsToParent(filterPanel, rowData, false)
+	});
+
 }
 
-function appendBtnsToParent(parentElement, rowData, isActive){
-        var label = document.createElement('label');
-      label.classList.add('mr-1');
-      label.classList.add('mt-1');
-      label.classList.add('place-type-btn');
-      label.classList.add('btn');
-      label.classList.add('btn-sm');
-      label.classList.add('btn-secondary');
-      if(isActive == true)
-          label.classList.add('active'); //TODO - only if active
-      label.setAttribute("aria-labelledby", rowData);
-      
-    var input = document.createElement('input');
-      input.setAttribute("type", "checkbox");
-      input.setAttribute("autocomplete", "off");
-    if(isActive == true)
-        input.setAttribute("checked", true);
-      input.setAttribute("value", rowData);
-      //input.createTextNode(rowData);
-      
-      label.appendChild(input);
-      var sanitizedLabel = rowData.replace(/_/g, " ");
-      label.appendChild(document.createTextNode(sanitizedLabel));
-//    rowData.forEach(function(cellData) {
-//      var cell = document.createElement('td');
-//      cell.appendChild(document.createTextNode(cellData));
-//      row.appendChild(cell);
-//    });
+function appendBtnsToParent(parentElement, rowData, isActive) {
+	
+	var label = document.createElement('label');
+	label.classList.add('mr-1');
+	label.classList.add('mt-1');
+	label.classList.add('place-type-btn');
+	label.classList.add('btn');
+	label.classList.add('btn-sm');
 
-    parentElement.appendChild(label);    
+	if (isActive == true) {
+		label.classList.add('active');
+		label.classList.add('btn-primary');
+	} else {
+		label.classList.add('btn-secondary');
+	}
+	label.setAttribute("aria-labelledby", rowData);
+
+	var input = document.createElement('input');
+	input.setAttribute("type", "checkbox");
+	input.setAttribute("autocomplete", "off");
+	if (isActive == true)
+		input.setAttribute("checked", true);
+	input.setAttribute("value", rowData);
+	//input.createTextNode(rowData);
+
+	label.appendChild(input);
+	var sanitizedLabel = rowData.replace(/_/g, " ");
+	label.appendChild(document.createTextNode(sanitizedLabel));
+
+	parentElement.appendChild(label);
 }
 
 function initMap() {
-    var london = new google.maps.LatLng(51.512886, -0.102280);
-    var causewayCoast = new google.maps.LatLng(55.167355, -6.679138);
-    infoWindow = new google.maps.InfoWindow({});
-    
-    //JQUERY for Button Toggle selection of places
-    $(".place-type-btn").click(function(event){
-        var target = $(event.currentTarget);
-       var placeTypeStr = target.attr('aria-labelledby');
-        
-        if(target.hasClass('active')){
-            var removePos = placesAllSelected.indexOf(placeTypeStr)
-            placesAllSelected.splice(removePos, 1);
-            clearMarkers(placeTypeStr);
-        }
-        else{
-            placesAllSelected.push(placeTypeStr);
-            // TODO - implement some caching?
-            getMultipleDifferentPlaces(map.getCenter());            
-        }  
-    });
+	var london = new google.maps.LatLng(51.512886, -0.102280);
+	var causewayCoast = new google.maps.LatLng(55.167355, -6.679138);
+	infoWindow = new google.maps.InfoWindow({});
 
-        mapOptions = {
-            center: london, 
-            zoom: 14,
-            styles: mapStyle,
-            disableDefaultUI: true,
-            zoomControl: true,
-//            mapTypeControl: true,
-            scaleControl: true,
-            streetViewControl: true,
-            rotateControl: true,
-            fullscreenControl: true
-        };
+	//jQuery for Button Toggle selection of places
+	$(".place-type-btn").click(function (event) {
+		var target = $(event.currentTarget);
+		var placeTypeStr = target.attr('aria-labelledby');
 
-    map = new google.maps.Map(document.getElementById('map'), mapOptions);
-    placesService = new google.maps.places.PlacesService(map);
+		if (target.hasClass('active')) {
+			// Button was Un-selected
+			target.removeClass('btn-primary');
+			target.addClass('btn-secondary');
+			var removePos = placesAllSelected.indexOf(placeTypeStr)
+			placesAllSelected.splice(removePos, 1);
+			clearMarkers(placeTypeStr);
+		} else {
+			// Button was Selected
+			target.removeClass('btn-secondary');
+			target.addClass('btn-primary');
+			placesAllSelected.push(placeTypeStr);
+			// TODO - implement some caching???
+			getMultipleDifferentPlaces(map.getCenter());
+		}
+	});
 
-// Drag-End Event
-//map.addListener('idle', function() {
-//    //get center location of the drag
-//    //setTimeout(function(){ 
-//        getMultipleDifferentPlaces(map.getCenter());
-//    //}, 3000);
-//    
-//});
-    
-    
-        // Try HTML5 geolocation.
-        if (navigator.geolocation) {
-          navigator.geolocation.getCurrentPosition(function(position) {
-                userLocation = {
-                  lat: position.coords.latitude,
-                  lng: position.coords.longitude
-                };
+	mapOptions = {
+		center: london,
+		zoom: 14,
+		styles: mapStyle,
+		disableDefaultUI: true,
+		zoomControl: true,
+		//mapTypeControl: true,
+		scaleControl: true,
+		streetViewControl: true,
+		rotateControl: true,
+		fullscreenControl: true
+	};
 
+	map = new google.maps.Map(document.getElementById('map'), mapOptions);
+	placesService = new google.maps.places.PlacesService(map);
 
+	
+	// Try HTML5 geolocation.
+	if (navigator.geolocation) {
+		navigator.geolocation.getCurrentPosition(function (position) {
+			// Success getting location
+			userLocation = {
+				lat: position.coords.latitude,
+				lng: position.coords.longitude
+			};
+			map.setCenter(userLocation);
+			map.zoom = 16;
 
-                map.setCenter(userLocation);
-                map.zoom = 16;
-              
-          }, function() {
-            handleLocationError(true, infoWindow, map.getCenter());
-          });
-        } else {
-          // Browser doesn't support Geolocation
-          handleLocationError(false, infoWindow, map.getCenter());
-        }
-    
-if(map.getBounds() == undefined) {
-        setTimeout(function() {
-            getMultipleDifferentPlaces();
-        }, 500); //some error map.getBounds() returns undefined at start so that's why I delay it by 500ms
-    } 
+		}, function () {
+			handleLocationError(true, infoWindow, map.getCenter());
+		});
+	} else {
+		// Browser doesn't support Geolocation
+		handleLocationError(false, infoWindow, map.getCenter());
+	}
+
+	if (map.getBounds() == undefined) {
+		setTimeout(function () {
+			getMultipleDifferentPlaces();
+		}, 500); //some error map.getBounds() returns undefined at start so that's why I delay it by 500ms
+	}
 
 
+	// EVENTS
+
+	// Panning/Dragging End
+	google.maps.event.addListener(map, 'dragend', function () {
+		if (map.zoom >= 8) //TODO if you want to getting places info when zoomed out
+			getMultipleDifferentPlaces();
+	});
+
+	// Zooming Out End (with correct timout method)
+	google.maps.event.addListener(map, 'zoom_changed', function () {
+
+		//    if(map.zoom >= 8) //TODO if you want to getting places info when zoomed out
+		//        getMultipleDifferentPlaces(map.getCenter());
+
+		rtime = new Date();
+		if (timeout === false) {
+			timeout = true;
+			setTimeout(zoomChangedEnd, delta);
+		}
+	});
 
 
 
-//    google.maps.event.addListener(map, 'bounds_changed', function() {
-//        console.log('bounds_changed');
-//        //getMultipleDifferentPlaces(map.getCenter());
-//    });  
-
-    google.maps.event.addListener(map, 'dragend', function() {
-        if(map.zoom >= 8) //TODO if you want to getting places info when zoomed out
-            getMultipleDifferentPlaces();
-    }); 
-
-    google.maps.event.addListener(map, 'zoom_changed', function() {
-        
-    //    if(map.zoom >= 8) //TODO if you want to getting places info when zoomed out
-    //        getMultipleDifferentPlaces(map.getCenter());
-        
-        rtime = new Date();
-        if (timeout === false) {
-            timeout = true;
-            setTimeout(zoomChangedEnd, delta);
-        }
-    });
-
-
-    
 }
 
 
 var rtime;
 var timeout = false;
 var delta = 700;
-function zoomChangedEnd(){
-    if (new Date() - rtime < delta) {
-        setTimeout(zoomChangedEnd, delta);
-    } else {
-        timeout = false;
-        getMultipleDifferentPlaces();
-    }
+
+function zoomChangedEnd() {
+	if (new Date() - rtime < delta) {
+		setTimeout(zoomChangedEnd, delta);
+	} else {
+		timeout = false;
+		getMultipleDifferentPlaces();
+	}
 }
 
-function getAllSelectedPlaces(){
-    
+function getAllSelectedPlaces() {
+
 }
 
-function getMultipleDifferentPlaces(){
-    
-    //Build config
-    //var config = placesAllSelected; //placesEssential.concat(placesSafety);
-    if(map.zoom < 8){
-        console.log("Please zoom-in to see the new pins.");
-        return;
-    }
-    
-    for(i = 0; i < placesAllSelected.length; i++) {
-        getPlacesNearby(placesAllSelected[i]);
-    }
-    
-    //map.setCenter(selectedLocation);
+function getMultipleDifferentPlaces() {
+
+	//Build config
+	//var config = placesAllSelected; //placesEssential.concat(placesSafety);
+	if (map.zoom < 8) {
+		console.log("Please zoom-in to see the new pins.");
+		return;
+	}
+
+	for (i = 0; i < placesAllSelected.length; i++) {
+		getPlacesNearby(placesAllSelected[i]);
+	}
+
+	//map.setCenter(selectedLocation);
 }
 
 
 
 function getPlacesNearby(selectedType) {
-//    if(map.getBounds() == undefined) {
-//        var request = {
-//            location: map.getCenter(),
-//            radius: '50000',
-//            type: selectedType
-//        };
-//    }
-//    else {
-//        var request = {
-//            bounds: map.getBounds(),
-//            type: selectedType
-//        };
-//    }
-    
-    
-    
-    var request = {
-            bounds: map.getBounds(),
-            type: selectedType
-        };
-    
-    console.log("Getting nearby places center: "+  map.getCenter() +" bounds:" + map.getBounds());
-    
-    placesService.nearbySearch(request, 
-        function(results, status) {
-            if (status === google.maps.places.PlacesServiceStatus.OK) {
-              for (var i = 0; i < results.length; i++) {
-                createMarker(results[i], selectedType);
-              }
-              //map.setCenter(selectedLocation);
-            }
-    });
+	//    if(map.getBounds() == undefined) {
+	//        var request = {
+	//            location: map.getCenter(),
+	//            radius: '50000',
+	//            type: selectedType
+	//        };
+	//    }
+	//    else {
+	//        var request = {
+	//            bounds: map.getBounds(),
+	//            type: selectedType
+	//        };
+	//    }
+
+
+
+	var request = {
+		bounds: map.getBounds(),
+		type: selectedType
+	};
+
+	console.log("Getting nearby places center: " + map.getCenter() + " bounds:" + map.getBounds());
+
+	placesService.nearbySearch(request,
+		function (results, status) {
+			if (status === google.maps.places.PlacesServiceStatus.OK) {
+				for (var i = 0; i < results.length; i++) {
+					createMarker(results[i], selectedType);
+				}
+				//map.setCenter(selectedLocation);
+			}
+		});
 }
 
 function getPlacesFromQuery(request) {
-    
-    placesService.findPlaceFromQuery(request, function(results, status) {
-        if (status === google.maps.places.PlacesServiceStatus.OK) {
-          for (var i = 0; i < results.length; i++) {
-            createMarker(results[i]);
-          }
-          map.setCenter(results[0].geometry.location);
-        }
-    });
-    
+
+	placesService.findPlaceFromQuery(request, function (results, status) {
+		if (status === google.maps.places.PlacesServiceStatus.OK) {
+			for (var i = 0; i < results.length; i++) {
+				createMarker(results[i]);
+			}
+			map.setCenter(results[0].geometry.location);
+		}
+	});
+
 }
 
 
 // Location Error Handling
 function handleLocationError(browserHasGeolocation, infoWindow, pos) {
-//    infoWindow.setPosition(pos);
-//    infoWindow.setContent(browserHasGeolocation ?
-//                          'Error: The Geolocation service failed.' :
-//                          'Error: Your browser doesn\'t support geolocation.');
-//    infoWindow.open(map);
-  }
+	//    infoWindow.setPosition(pos);
+	//    infoWindow.setContent(browserHasGeolocation ?
+	//                          'Error: The Geolocation service failed.' :
+	//                          'Error: Your browser doesn\'t support geolocation.');
+	//    infoWindow.open(map);
+}
 
 var markers = [];
 
-function createMarker (pos, selectedType) {
-    
-     var icon = {
-      url: pos.icon,
-      size: new google.maps.Size(71, 71),
-      origin: new google.maps.Point(0, 0),
-      anchor: new google.maps.Point(17, 34),
-      scaledSize: new google.maps.Size(25, 25)
-    };
-    
-    
-    var marker = new google.maps.Marker({
-        placeType: selectedType,
-        position: pos.geometry.location,
-        map: map,
-        icon: icon
-    });
-    
-    markers.push(marker);
-    
-//    marker.addListener('click', function() {
-//        infoWindow.open(map, marker);
-//    });
-    
-    
-    // Show the information for a store when its marker is clicked.
-    marker.addListener('click', function() {
-    var name = pos.name;
-    //var description = event.feature.getProperty('description');
-    var hours = (pos.opening_hours != undefined) ? pos.opening_hours.open_now : '';
-    //var phone = event.feature.getProperty('phone');
-    var position = pos.geometry.location;
-    var rating = pos.rating;
-    var vicinity = pos.vicinity;
-    var typesButtons = `<div class="btn-group-toggle" data-toggle="buttons">`;
-        
-    for(i = 0; i < pos.types.length; i++) {
-        typesButtons += `
+function createMarker(pos, selectedType) {
+
+	var icon = {
+		url: pos.icon,
+		size: new google.maps.Size(71, 71),
+		origin: new google.maps.Point(0, 0),
+		anchor: new google.maps.Point(17, 34),
+		scaledSize: new google.maps.Size(25, 25)
+	};
+
+
+	var marker = new google.maps.Marker({
+		placeType: selectedType,
+		position: pos.geometry.location,
+		map: map,
+		icon: icon
+	});
+
+	markers.push(marker);
+
+	//    marker.addListener('click', function() {
+	//        infoWindow.open(map, marker);
+	//    });
+
+
+	// Show the information for a store when its marker is clicked.
+	marker.addListener('click', function () {
+		var name = pos.name;
+		//var description = event.feature.getProperty('description');
+		var hours = (pos.opening_hours != undefined) ? pos.opening_hours.open_now : '';
+		//var phone = event.feature.getProperty('phone');
+		var position = pos.geometry.location;
+		var rating = pos.rating;
+		var vicinity = pos.vicinity;
+		var typesButtons = `<div class="btn-group-toggle" data-toggle="buttons">`;
+
+		for (i = 0; i < pos.types.length; i++) {
+			typesButtons += `
 <label class="btn btn-sm btn-secondary btn-sm p-0 px-1 active">
 <input type="checkbox" checked autocomplete="off"> ${pos.types[i]}
 </label>
 `;
-        
-        
-    
-                
-    }    
-    
-    typesButtons += "</div>";
-      
-    var content = 
-`
+
+
+
+
+		}
+
+		typesButtons += "</div>";
+
+		var content =
+			`
 <div class="container-fluid">
 <div class="row">
 <div class="col p-0">
@@ -358,43 +343,45 @@ ${typesButtons}
 </div>
 `;
 
-    infoWindow.setContent(content);
-    infoWindow.setPosition(pos.geometry.location);
-    infoWindow.setOptions({pixelOffset: new google.maps.Size(0, -30)});
-    infoWindow.open(map);
-  });
+		infoWindow.setContent(content);
+		infoWindow.setPosition(pos.geometry.location);
+		infoWindow.setOptions({
+			pixelOffset: new google.maps.Size(0, -30)
+		});
+		infoWindow.open(map);
+	});
 
-    
-    
+
+
 }
 
 function createMarkers(places) {
-  var bounds = new google.maps.LatLngBounds();
-  //var placesList = document.getElementById('places');
+	var bounds = new google.maps.LatLngBounds();
+	//var placesList = document.getElementById('places');
 
-  for (var i = 0, place; place = places[i]; i++) {
-    var image = {
-      url: place.icon,
-      size: new google.maps.Size(71, 71),
-      origin: new google.maps.Point(0, 0),
-      anchor: new google.maps.Point(17, 34),
-      scaledSize: new google.maps.Size(25, 25)
-    };
+	for (var i = 0, place; place = places[i]; i++) {
+		var image = {
+			url: place.icon,
+			size: new google.maps.Size(71, 71),
+			origin: new google.maps.Point(0, 0),
+			anchor: new google.maps.Point(17, 34),
+			scaledSize: new google.maps.Size(25, 25)
+		};
 
-    var marker = new google.maps.Marker({
-      map: map,
-      icon: image,
-      title: place.name,
-      position: place.geometry.location
-    });
+		var marker = new google.maps.Marker({
+			map: map,
+			icon: image,
+			title: place.name,
+			position: place.geometry.location
+		});
 
-    var li = document.createElement('li');
-    li.textContent = place.name;
-    placesList.appendChild(li);
+		var li = document.createElement('li');
+		li.textContent = place.name;
+		placesList.appendChild(li);
 
-    bounds.extend(place.geometry.location);
-  }
-  map.fitBounds(bounds);
+		bounds.extend(place.geometry.location);
+	}
+	map.fitBounds(bounds);
 }
 
 
@@ -402,15 +389,15 @@ function createMarkers(places) {
 
 // Sets the map on all markers in the array.
 function setMapOnAll(mapID, placeType) {
-    for (var i = 0; i < markers.length; i++) {
-        if(markers[i].placeType == placeType)
-            markers[i].setMap(mapID);
-    }
+	for (var i = 0; i < markers.length; i++) {
+		if (markers[i].placeType == placeType)
+			markers[i].setMap(mapID);
+	}
 }
 
 // Removes the markers from the map, but keeps them in the array.
 function clearMarkers(placeType) {
-    setMapOnAll(null, placeType);
+	setMapOnAll(null, placeType);
 }
 
 
@@ -420,179 +407,178 @@ function clearMarkers(placeType) {
 
 // Credits: https://snazzymaps.com/style/151/ultra-light-with-labels
 //
-const mapStyle = 
-[
-    {
-        "featureType": "water",
-        "elementType": "geometry",
-        "stylers": [
-            {
-                "color": "#e9e9e9"
+const mapStyle = [
+	{
+		"featureType": "water",
+		"elementType": "geometry",
+		"stylers": [
+			{
+				"color": "#e9e9e9"
             },
-            {
-                "lightness": 17
+			{
+				"lightness": 17
             }
         ]
     },
-    {
-        "featureType": "landscape",
-        "elementType": "geometry",
-        "stylers": [
-            {
-                "color": "#f5f5f5"
+	{
+		"featureType": "landscape",
+		"elementType": "geometry",
+		"stylers": [
+			{
+				"color": "#f5f5f5"
             },
-            {
-                "lightness": 20
+			{
+				"lightness": 20
             }
         ]
     },
-    {
-        "featureType": "road.highway",
-        "elementType": "geometry.fill",
-        "stylers": [
-            {
-                "color": "#ffffff"
+	{
+		"featureType": "road.highway",
+		"elementType": "geometry.fill",
+		"stylers": [
+			{
+				"color": "#ffffff"
             },
-            {
-                "lightness": 17
+			{
+				"lightness": 17
             }
         ]
     },
-    {
-        "featureType": "road.highway",
-        "elementType": "geometry.stroke",
-        "stylers": [
-            {
-                "color": "#ffffff"
+	{
+		"featureType": "road.highway",
+		"elementType": "geometry.stroke",
+		"stylers": [
+			{
+				"color": "#ffffff"
             },
-            {
-                "lightness": 29
+			{
+				"lightness": 29
             },
-            {
-                "weight": 0.2
+			{
+				"weight": 0.2
             }
         ]
     },
-    {
-        "featureType": "road.arterial",
-        "elementType": "geometry",
-        "stylers": [
-            {
-                "color": "#ffffff"
+	{
+		"featureType": "road.arterial",
+		"elementType": "geometry",
+		"stylers": [
+			{
+				"color": "#ffffff"
             },
-            {
-                "lightness": 18
+			{
+				"lightness": 18
             }
         ]
     },
-    {
-        "featureType": "road.local",
-        "elementType": "geometry",
-        "stylers": [
-            {
-                "color": "#ffffff"
+	{
+		"featureType": "road.local",
+		"elementType": "geometry",
+		"stylers": [
+			{
+				"color": "#ffffff"
             },
-            {
-                "lightness": 16
+			{
+				"lightness": 16
             }
         ]
     },
-    {
-        "featureType": "poi",
-        "elementType": "geometry",
-        "stylers": [
-            {
-                "color": "#f5f5f5"
+	{
+		"featureType": "poi",
+		"elementType": "geometry",
+		"stylers": [
+			{
+				"color": "#f5f5f5"
             },
-            {
-                "lightness": 21
+			{
+				"lightness": 21
             }
         ]
     },
-    {
-        "featureType": "poi.park",
-        "elementType": "geometry",
-        "stylers": [
-            {
-                "color": "#dedede"
+	{
+		"featureType": "poi.park",
+		"elementType": "geometry",
+		"stylers": [
+			{
+				"color": "#dedede"
             },
-            {
-                "lightness": 21
+			{
+				"lightness": 21
             }
         ]
     },
-    {
-        "elementType": "labels.text.stroke",
-        "stylers": [
-            {
-                "visibility": "on"
+	{
+		"elementType": "labels.text.stroke",
+		"stylers": [
+			{
+				"visibility": "on"
             },
-            {
-                "color": "#ffffff"
+			{
+				"color": "#ffffff"
             },
-            {
-                "lightness": 16
+			{
+				"lightness": 16
             }
         ]
     },
-    {
-        "elementType": "labels.text.fill",
-        "stylers": [
-            {
-                "saturation": 36
+	{
+		"elementType": "labels.text.fill",
+		"stylers": [
+			{
+				"saturation": 36
             },
-            {
-                "color": "#333333"
+			{
+				"color": "#333333"
             },
-            {
-                "lightness": 40
+			{
+				"lightness": 40
             }
         ]
     },
-    {
-        "elementType": "labels.icon",
-        "stylers": [
-            {
-                "visibility": "off"
+	{
+		"elementType": "labels.icon",
+		"stylers": [
+			{
+				"visibility": "off"
             }
         ]
     },
-    {
-        "featureType": "transit",
-        "elementType": "geometry",
-        "stylers": [
-            {
-                "color": "#f2f2f2"
+	{
+		"featureType": "transit",
+		"elementType": "geometry",
+		"stylers": [
+			{
+				"color": "#f2f2f2"
             },
-            {
-                "lightness": 19
+			{
+				"lightness": 19
             }
         ]
     },
-    {
-        "featureType": "administrative",
-        "elementType": "geometry.fill",
-        "stylers": [
-            {
-                "color": "#fefefe"
+	{
+		"featureType": "administrative",
+		"elementType": "geometry.fill",
+		"stylers": [
+			{
+				"color": "#fefefe"
             },
-            {
-                "lightness": 20
+			{
+				"lightness": 20
             }
         ]
     },
-    {
-        "featureType": "administrative",
-        "elementType": "geometry.stroke",
-        "stylers": [
-            {
-                "color": "#fefefe"
+	{
+		"featureType": "administrative",
+		"elementType": "geometry.stroke",
+		"stylers": [
+			{
+				"color": "#fefefe"
             },
-            {
-                "lightness": 17
+			{
+				"lightness": 17
             },
-            {
-                "weight": 1.2
+			{
+				"weight": 1.2
             }
         ]
     }

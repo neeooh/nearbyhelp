@@ -1,88 +1,100 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-    <meta charset="UTF-8">
-    <title>Nearby Opened Business Locator App</title>
-     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-     <meta name="theme-color" content="#343a40" />
-      <style>
-    #map {
-      height: 100%;
-    }
-    
-    html,
-    body {
-      height: 100%;
-      margin: 0;
-      padding: 0;
-    }
-li.nav-item {
-    padding-right: 10px;
-}
+	<meta charset="UTF-8">
+	<title>Nearby Opened Business Locator App</title>
+	<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+	<meta name="theme-color" content="#343a40" />
+	<style>
+		#map {
+			height: 100%;
+		}
 
-  </style>
-  
-  
-  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
-  
-  <link href="https://cdn.jsdelivr.net/npm/remixicon@2.3.0/fonts/remixicon.css" rel="stylesheet">
+		html,
+		body {
+			height: 100%;
+			margin: 0;
+			padding: 0;
+		}
+
+		li.nav-item {
+			padding-right: 10px;
+		}
+		
+		#filter-panel {
+			display: flex;
+			overflow-x: scroll;
+		}
+		
+		.overflow-hidden{
+			overflow: hidden;
+		}
+
+	</style>
+
+
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+
+	<link href="https://cdn.jsdelivr.net/npm/remixicon@2.3.0/fonts/remixicon.css" rel="stylesheet">
 </head>
+
 <body>
-    <div class="container-fluid h-100 d-flex" style="flex-flow: column;">
-<!--      Site Top NavBar-->
-       <div class="row">
-           <div class="col p-0">
-                <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
-                <a class="navbar-brand" href="#">Nearby Help</a>
-                <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
-                <span class="navbar-toggler-icon"></span>
-                </button>
+	<div class="container-fluid h-100 d-flex overflow-hidden" style="flex-flow: column;">
+		<!--      Site Top NavBar-->
+		<div class="row">
+			<div class="col p-0">
+				<nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+					<a class="navbar-brand" href="#">Nearby Help</a>
+					<button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+						<span class="navbar-toggler-icon"></span>
+					</button>
 
-                <div class="collapse navbar-collapse" id="navbarSupportedContent">
-                <ul class="navbar-nav mr-auto">
-                <li class="nav-item active">
-                <a class="nav-link" href="#">Home Map<span class="sr-only">(current)</span></a>
-                </li>
-                <li class="nav-item">
-                <a class="nav-link" href="about.html">Request Help</a>
-                </li>
-                <li class="nav-item dropdown">
-                <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                  For Business
-                </a>
-                <div class="dropdown-menu" aria-labelledby="navbarDropdown">
-                  <a class="dropdown-item" href="#">Become a local volunteer</a>
-                  <a class="dropdown-item" href="#">Become a local courier</a>
-                  <div class="dropdown-divider"></div>
-                  <a class="dropdown-item" href="#">Open an e-store</a>
-                  <a class="dropdown-item" href="#">Add Missing Pin (existing high-street business)</a>
-                </div>
-                </li>
-                <li class="nav-item">
-                <a class="nav-link" href="about.html">About</a>
-                </li>
-                <li class="nav-item">
-                <a class="nav-link p-0" href="#"><i class="ri-telegram-fill" style="font-size:27px"></i></a>
-                </li>
-                </ul>
-                
-                    
-                
-                </div>
-                </nav>
-                
-                
-                
-           </div>
-       </div>
-       
-       <div class="row">
-           <div class="col px-1 pt-0 pb-1">
-              
+					<div class="collapse navbar-collapse" id="navbarSupportedContent">
+						<ul class="navbar-nav mr-auto">
+							<li class="nav-item active">
+								<a class="nav-link" href="#">Home Map<span class="sr-only">(current)</span></a>
+							</li>
+							<li class="nav-item">
+								<a class="nav-link" href="about.html">Request Help</a>
+							</li>
+							<li class="nav-item dropdown">
+								<a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+									For Business
+								</a>
+								<div class="dropdown-menu" aria-labelledby="navbarDropdown">
+									<a class="dropdown-item" href="#">Become a local volunteer</a>
+									<a class="dropdown-item" href="#">Become a local courier</a>
+									<div class="dropdown-divider"></div>
+									<a class="dropdown-item" href="#">Open an e-store</a>
+									<a class="dropdown-item" href="#">Add Missing Pin (existing high-street business)</a>
+								</div>
+							</li>
+							<li class="nav-item">
+								<a class="nav-link" href="about.html">About</a>
+							</li>
+							<li class="nav-item">
+								<a class="nav-link p-0" href="#"><i class="ri-telegram-fill" style="font-size:27px"></i></a>
+							</li>
+						</ul>
 
-                <div id="filter-panel" class="btn-group-toggle" data-toggle="buttons">
-<!--                 <label>Selected:</label>-->
-<!--
+
+
+					</div>
+				</nav>
+
+
+
+			</div>
+		</div>
+
+		<div class="row">
+			<div class="col px-1 pt-0 pb-1">
+
+
+				<div id="filter-panel" class="btn-group-toggle" data-toggle="buttons">
+					<!--                 <label>Selected:</label>-->
+					<!--
                   <label aria-labelledby="pharmacy" class="place-type-btn btn btn-secondary btn-sm active">
                     <input type="checkbox" checked autocomplete="off"> Pharmacy
                   </label>
@@ -90,28 +102,29 @@ li.nav-item {
                     <input type="checkbox" autocomplete="off"> Convinience Store
                   </label>
 -->
-                </div>
-           </div>
-       </div>
-       
-<!--       Map-->
-       <div class="row h-100">
-           <div class="col p-0">
-                <div id="map"></div>
-            </div>
-       </div>
-        
-    </div>
+				</div>
+			</div>
+		</div>
 
-  
-<!--App and GMaps-->
-  <script src="app.js"></script>
-  <script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDKLAB-abarMKOVmwh2NYHq5zkXnaMstjI&libraries=places&callback=initMap">
-  </script>
-    
-<!--Bootstrap JS-->
-  <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
-<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+		<!--       Map-->
+		<div class="row h-100">
+			<div class="col p-0">
+				<div id="map"></div>
+			</div>
+		</div>
+
+	</div>
+
+
+	<!--App and GMaps-->
+	<script src="app.js"></script>
+	<script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDKLAB-abarMKOVmwh2NYHq5zkXnaMstjI&libraries=places&callback=initMap">
+	</script>
+
+	<!--Bootstrap JS-->
+	<script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
 </body>
+
 </html>
