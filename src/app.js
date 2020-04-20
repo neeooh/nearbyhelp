@@ -34,61 +34,9 @@ var placesAllUnSelected = [];
 	// Create The UI GUI Buttons for Places
 	createNavBtns();
 
-}());
-
-
-function createNavBtns() {
 	
-	var filterPanel = document.getElementById('filter-panel');
-
-	placesAllSelected.forEach(function (rowData) {
-		appendBtnsToParent(filterPanel, rowData, true)
-	});
-
-	var groupLabel = document.createElement('label');
-	//groupLabel.appendChild(document.createTextNode("Unselected:"));
-
-	filterPanel.appendChild(groupLabel);
-
-	placesAllUnSelected.forEach(function (rowData) {
-		appendBtnsToParent(filterPanel, rowData, false)
-	});
-
-}
-
-function appendBtnsToParent(parentElement, rowData, isActive) {
-	
-	var label = document.createElement('label');
-	label.classList.add('mr-1');
-	label.classList.add('mt-1');
-	label.classList.add('place-type-btn');
-	label.classList.add('btn');
-	label.classList.add('btn-sm');
-
-	if (isActive == true) {
-		label.classList.add('active');
-		label.classList.add('btn-primary');
-	} else {
-		label.classList.add('btn-secondary');
-	}
-	label.setAttribute("aria-labelledby", rowData);
-
-	var input = document.createElement('input');
-	input.setAttribute("type", "checkbox");
-	input.setAttribute("autocomplete", "off");
-	if (isActive == true)
-		input.setAttribute("checked", true);
-	input.setAttribute("value", rowData);
-	//input.createTextNode(rowData);
-
-	label.appendChild(input);
-	var sanitizedLabel = rowData.replace(/_/g, " ");
-	label.appendChild(document.createTextNode(sanitizedLabel));
-
-	parentElement.appendChild(label);
-}
-
-function initMap() {
+	window.initMap = function(){
+	//function initMap() {
 	var london = new google.maps.LatLng(51.512886, -0.102280);
 	var causewayCoast = new google.maps.LatLng(55.167355, -6.679138);
 	infoWindow = new google.maps.InfoWindow({});
@@ -178,10 +126,65 @@ function initMap() {
 			setTimeout(zoomChangedEnd, delta);
 		}
 	});
+}
+	
+	
+	
+}());
 
 
+function createNavBtns() {
+	
+	var filterPanel = document.getElementById('filter-panel');
+
+	placesAllSelected.forEach(function (rowData) {
+		appendBtnsToParent(filterPanel, rowData, true)
+	});
+
+	var groupLabel = document.createElement('label');
+	//groupLabel.appendChild(document.createTextNode("Unselected:"));
+
+	filterPanel.appendChild(groupLabel);
+
+	placesAllUnSelected.forEach(function (rowData) {
+		appendBtnsToParent(filterPanel, rowData, false)
+	});
 
 }
+
+function appendBtnsToParent(parentElement, rowData, isActive) {
+	
+	var label = document.createElement('label');
+	label.classList.add('mr-1');
+	label.classList.add('mt-1');
+	label.classList.add('place-type-btn');
+	label.classList.add('btn');
+	label.classList.add('btn-sm');
+
+	if (isActive == true) {
+		label.classList.add('active');
+		label.classList.add('btn-primary');
+	} else {
+		label.classList.add('btn-secondary');
+	}
+	label.setAttribute("aria-labelledby", rowData);
+
+	var input = document.createElement('input');
+	input.setAttribute("type", "checkbox");
+	input.setAttribute("autocomplete", "off");
+	if (isActive == true)
+		input.setAttribute("checked", true);
+	input.setAttribute("value", rowData);
+	//input.createTextNode(rowData);
+
+	label.appendChild(input);
+	var sanitizedLabel = rowData.replace(/_/g, " ");
+	label.appendChild(document.createTextNode(sanitizedLabel));
+
+	parentElement.appendChild(label);
+}
+
+
 
 
 var rtime;
