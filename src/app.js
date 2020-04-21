@@ -4,7 +4,7 @@ var infowindow;
 var userLocation;
 var infoWindow;
 
-var placesAllSelected = ['pharmacy', 'grocery_or_supermarket']; //
+var placesAllSelected = []; //'pharmacy', 'grocery_or_supermarket'
 
 
 var placesEssential = ['pharmacy', 'grocery_or_supermarket', 'convenience_store', 'liquor_store', 'post_office', 'atm'];
