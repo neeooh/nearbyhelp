@@ -30,6 +30,7 @@
 		.overflow-hidden {
 			overflow: hidden;
 		}
+
 	</style>
 
 	<!-- Global site tag (gtag.js) - Google Analytics -->
@@ -43,6 +44,7 @@
 		gtag('js', new Date());
 
 		gtag('config', 'G-SK42ZT70EP');
+
 	</script>
 
 	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
@@ -63,6 +65,7 @@
 
 					<div class="collapse navbar-collapse" id="navbarSupportedContent">
 						<ul class="navbar-nav mr-auto">
+							<!--
 							<li class="nav-item active">
 								<a class="nav-link" href="#">Home Map<span class="sr-only">(current)</span></a>
 							</li>
@@ -84,6 +87,7 @@
 							<li class="nav-item">
 								<a class="nav-link" href="about.html">About</a>
 							</li>
+-->
 							<li class="nav-item">
 								<a class="nav-link p-0" href="#"><i class="ri-telegram-fill" style="font-size:27px"></i></a>
 							</li>
@@ -105,6 +109,12 @@
 
 
 				<div id="filter-panel" class="btn-group-toggle" data-toggle="buttons">
+					<label aria-labelledby="pharmacy" class="mr-1 mt-1 place-type-btn btn btn-sm btn-warning focus active">
+						<input type="checkbox" checked autocomplete="off"> Opened now
+					</label>
+					<label aria-labelledby="pharmacy" class="mr-1 mt-1 place-type-btn btn btn-sm btn-success focus active">
+						<input type="checkbox" checked autocomplete="off"> Virtual e-Shops
+					</label>
 					<!--                 <label>Selected:</label>-->
 					<!--
 		  <label aria-labelledby="pharmacy" class="place-type-btn btn btn-secondary btn-sm active">
@@ -146,4 +156,6 @@
 
 
 
-</body></html>
+</body>
+
+</html>
